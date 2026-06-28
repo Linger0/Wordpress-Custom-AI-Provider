@@ -1,10 +1,10 @@
-# My OpenAI Responses Provider
+# Custom AI Responses Provider
 
 WordPress AI Client provider plugin for OpenAI-compatible text generation services, with per-model support for both the Responses API and Chat Completions API.
 
 ## Repository
 
-- Suggested repository name: `my-openai-responses-provider`
+- Suggested repository name: `wordpress-custom-ai-provider`
 - Suggested description: `WordPress AI Client provider for OpenAI-compatible Responses and Chat Completions endpoints.`
 - GitHub repository: `https://github.com/Linger0/Wordpress-Custom-AI-Provider`
 - Author: `Linger0`
@@ -21,6 +21,17 @@ WordPress AI Client provider plugin for OpenAI-compatible text generation servic
 - Adapts chat-style WordPress AI Client text prompts into Responses API `input` payloads.
 - Allows localhost-compatible base URLs for local OpenAI-compatible gateways.
 
+## WordPress.org Submission
+
+This repository includes a WordPress.org-style `readme.txt` with plugin directory metadata, installation steps, FAQ, changelog, and external service disclosure.
+
+WordPress.org submission flow:
+
+1. Create a ZIP containing the plugin folder.
+2. Submit it at `https://wordpress.org/plugins/developers/add/`.
+3. Wait for review.
+4. After approval, publish future releases through the WordPress.org SVN repository assigned to the plugin.
+
 ## Requirements
 
 - WordPress 7.0 or newer
@@ -31,10 +42,10 @@ WordPress AI Client provider plugin for OpenAI-compatible text generation servic
 ## Installation
 
 1. Copy this plugin directory to `wp-content/plugins/my-openai-responses-provider`.
-2. Activate `My OpenAI Responses Provider` in WordPress admin.
+2. Activate `Custom AI Responses Provider` in WordPress admin.
 3. Open `Settings > Connectors`.
-4. Set the API key for `My OpenAI Responses Provider`.
-5. Open `Settings > My OpenAI Responses Provider`.
+4. Set the API key for `Custom AI Responses Provider`.
+5. Open `Settings > Custom AI Responses Provider`.
 6. Configure the API base URL and model list.
 
 ## Configuration
@@ -94,7 +105,7 @@ This means a `/v1/responses` request was sent without a Responses API `input` fi
 
 ### API key is not configured
 
-Open `Settings > Connectors` and set the key for `My OpenAI Responses Provider`. For local development, you can also set `OPENAI_RESPONSES_API_KEY`.
+Open `Settings > Connectors` and set the key for `Custom AI Responses Provider`. For local development, you can also set `OPENAI_RESPONSES_API_KEY`.
 
 ### Localhost endpoint requests fail
 

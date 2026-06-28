@@ -44,11 +44,11 @@ class ResponsesProvider extends AbstractApiProvider {
 	protected static function createProviderMetadata(): ProviderMetadata {
 		$provider_metadata_args = [
 			'openai_responses',
-			__( 'My OpenAI Responses Provider', 'my-openai-responses-provider' ),
+			__( 'Custom AI Responses Provider', 'my-openai-responses-provider' ),
 			ProviderTypeEnum::cloud(),
 			'',
 			RequestAuthenticationMethod::apiKey(),
-			__( 'OpenAI Responses API compatible text generation provider.', 'my-openai-responses-provider' ),
+			__( 'Configurable Responses and Chat Completions compatible text generation provider.', 'my-openai-responses-provider' ),
 		];
 
 		if ( class_exists( AiClient::class ) && version_compare( AiClient::VERSION, '1.3.0', '>=' ) ) {

@@ -59,8 +59,8 @@ class ResponsesSettings {
 
 	public function register_settings_screen(): void {
 		add_options_page(
-			__( 'My OpenAI Responses Provider', 'my-openai-responses-provider' ),
-			__( 'My OpenAI Responses Provider', 'my-openai-responses-provider' ),
+			__( 'Custom AI Responses Provider', 'my-openai-responses-provider' ),
+			__( 'Custom AI Responses Provider', 'my-openai-responses-provider' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			[ $this, 'render_screen' ]
@@ -148,7 +148,7 @@ class ResponsesSettings {
 			<p>
 				<?php
 				printf(
-					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the My OpenAI Responses Provider connector.', 'my-openai-responses-provider' ),
+					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the Custom AI Responses Provider connector.', 'my-openai-responses-provider' ),
 					'<a href="' . esc_url( admin_url( 'options-connectors.php' ) ) . '">',
 					'</a>'
 				);

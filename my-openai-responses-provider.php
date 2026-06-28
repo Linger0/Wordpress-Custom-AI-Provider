@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name:       My OpenAI Responses Provider
+ * Plugin Name:       Custom AI Responses Provider
  * Plugin URI:        https://github.com/Linger0/Wordpress-Custom-AI-Provider
- * Description:       OpenAI-compatible provider for the WordPress AI Client with configurable endpoint and default text model.
+ * Description:       AI provider for the WordPress AI Client with configurable Responses and Chat Completions endpoints.
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Version:           0.1.0
@@ -47,7 +47,7 @@ function check_php_version(): bool {
 			static function () {
 				requirement_notice(
 					sprintf(
-						__( 'The My OpenAI Responses Provider plugin requires PHP version %1$s or higher. You are running PHP version %2$s.', 'my-openai-responses-provider' ),
+						__( 'The Custom AI Responses Provider plugin requires PHP version %1$s or higher. You are running PHP version %2$s.', 'my-openai-responses-provider' ),
 						MY_OPENAI_RESPONSES_PROVIDER_MIN_PHP_VERSION,
 						PHP_VERSION
 					)
@@ -69,7 +69,7 @@ function check_wp_version(): bool {
 				global $wp_version;
 				requirement_notice(
 					sprintf(
-						__( 'The My OpenAI Responses Provider plugin requires WordPress version %1$s or higher. You are running WordPress version %2$s.', 'my-openai-responses-provider' ),
+						__( 'The Custom AI Responses Provider plugin requires WordPress version %1$s or higher. You are running WordPress version %2$s.', 'my-openai-responses-provider' ),
 						MY_OPENAI_RESPONSES_PROVIDER_MIN_WP_VERSION,
 						$wp_version
 					)
@@ -89,7 +89,7 @@ function check_ai_client(): bool {
 			'admin_notices',
 			static function () {
 				requirement_notice(
-					__( 'The My OpenAI Responses Provider plugin requires the WordPress AI Client to be available in WordPress 7.0+.', 'my-openai-responses-provider' )
+					__( 'The Custom AI Responses Provider plugin requires the WordPress AI Client to be available in WordPress 7.0+.', 'my-openai-responses-provider' )
 				);
 			}
 		);

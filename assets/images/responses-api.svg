@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+	<title id="title">Custom AI Responses Provider</title>
+	<desc id="desc">Abstract plugin icon with connected response nodes.</desc>
+	<rect width="128" height="128" rx="24" fill="#1f2937"/>
+	<circle cx="40" cy="44" r="14" fill="#38bdf8"/>
+	<circle cx="88" cy="44" r="14" fill="#a3e635"/>
+	<circle cx="64" cy="86" r="16" fill="#f97316"/>
+	<path d="M52 46h24M47 56l10 17M81 56 71 73" fill="none" stroke="#f9fafb" stroke-width="8" stroke-linecap="round"/>
+</svg>
