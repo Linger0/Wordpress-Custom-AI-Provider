@@ -6,6 +6,8 @@ WordPress AI Client provider plugin for OpenAI-compatible text generation servic
 
 - Suggested repository name: `my-openai-responses-provider`
 - Suggested description: `WordPress AI Client provider for OpenAI-compatible Responses and Chat Completions endpoints.`
+- GitHub repository: `https://github.com/Linger0/Wordpress-Custom-AI-Provider`
+- Author: `Linger0`
 
 ## Features
 

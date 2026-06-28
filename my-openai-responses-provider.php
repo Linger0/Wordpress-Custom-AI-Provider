@@ -1,12 +1,13 @@
 <?php
 /**
  * Plugin Name:       My OpenAI Responses Provider
- * Plugin URI:        https://example.com/
+ * Plugin URI:        https://github.com/Linger0/Wordpress-Custom-AI-Provider
  * Description:       OpenAI-compatible provider for the WordPress AI Client with configurable endpoint and default text model.
  * Requires at least: 7.0
  * Requires PHP:      7.4
  * Version:           0.1.0
- * Author:            Codex
+ * Author:            Linger0
+ * Author URI:        https://github.com/Linger0
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       my-openai-responses-provider
