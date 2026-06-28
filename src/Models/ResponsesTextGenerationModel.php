@@ -10,8 +10,10 @@ namespace MyOpenAiResponsesProvider\Models;
 use MyOpenAiResponsesProvider\Settings\ResponsesSettings;
 use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
+use WordPress\AiClient\Providers\Http\DTO\Response;
 use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
 use WordPress\AiClient\Providers\OpenAiCompatibleImplementation\AbstractOpenAiCompatibleTextGenerationModel;
+use WordPress\AiClient\Results\DTO\GenerativeAiResult;
 
 class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGenerationModel {
 	protected function prepareGenerateTextParams( array $prompt ): array {
@@ -183,6 +185,125 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 
 		return [
 			'format' => $response_format,
+		];
+	}
+
+	protected function parseResponseToGenerativeAiResult( Response $response ): GenerativeAiResult {
+		if ( ! $this->uses_responses_api() ) {
+			return parent::parseResponseToGenerativeAiResult( $response );
+		}
+
+		$response_data = $response->getData();
+		if ( is_array( $response_data ) && isset( $response_data['choices'] ) ) {
+			return parent::parseResponseToGenerativeAiResult( $response );
+		}
+
+		return parent::parseResponseToGenerativeAiResult(
+			$this->convert_responses_response_to_chat_completions_response( $response )
+		);
+	}
+
+	private function convert_responses_response_to_chat_completions_response( Response $response ): Response {
+		$response_data = $response->getData();
+		if ( ! is_array( $response_data ) ) {
+			return $response;
+		}
+
+		$converted = [
+			'id'      => isset( $response_data['id'] ) && is_string( $response_data['id'] ) ? $response_data['id'] : '',
+			'object'  => 'chat.completion',
+			'created' => isset( $response_data['created_at'] ) && is_numeric( $response_data['created_at'] ) ? (int) $response_data['created_at'] : time(),
+			'model'   => isset( $response_data['model'] ) && is_string( $response_data['model'] ) ? $response_data['model'] : $this->metadata()->getId(),
+			'choices' => [
+				[
+					'index'         => 0,
+					'message'       => [
+						'role'    => 'assistant',
+						'content' => $this->extract_text_from_responses_data( $response_data ),
+					],
+					'finish_reason' => $this->map_responses_finish_reason( $response_data ),
+				],
+			],
+			'usage'   => $this->convert_responses_usage_to_chat_usage( $response_data['usage'] ?? null ),
+		];
+
+		$converted['responses_api_response'] = $response_data;
+
+		$converted_body = json_encode( $converted );
+		if ( false === $converted_body ) {
+			return $response;
+		}
+
+		return new Response(
+			$response->getStatusCode(),
+			$response->getHeaders(),
+			$converted_body
+		);
+	}
+
+	private function extract_text_from_responses_data( array $response_data ): string {
+		if ( isset( $response_data['output_text'] ) && is_string( $response_data['output_text'] ) ) {
+			return $response_data['output_text'];
+		}
+
+		$text_parts = [];
+		if ( isset( $response_data['output'] ) && is_array( $response_data['output'] ) ) {
+			foreach ( $response_data['output'] as $output_item ) {
+				if ( ! is_array( $output_item ) || ! isset( $output_item['content'] ) || ! is_array( $output_item['content'] ) ) {
+					continue;
+				}
+
+				foreach ( $output_item['content'] as $content_item ) {
+					if ( ! is_array( $content_item ) || ! isset( $content_item['text'] ) || ! is_string( $content_item['text'] ) ) {
+						continue;
+					}
+
+					$type = isset( $content_item['type'] ) && is_string( $content_item['type'] ) ? $content_item['type'] : '';
+					if ( '' === $type || 'output_text' === $type || 'text' === $type || 'refusal' === $type ) {
+						$text_parts[] = $content_item['text'];
+					}
+				}
+			}
+		}
+
+		return implode( '', $text_parts );
+	}
+
+	private function map_responses_finish_reason( array $response_data ): string {
+		$status = isset( $response_data['status'] ) && is_string( $response_data['status'] ) ? $response_data['status'] : '';
+		if ( 'incomplete' === $status ) {
+			$details = isset( $response_data['incomplete_details'] ) && is_array( $response_data['incomplete_details'] ) ? $response_data['incomplete_details'] : [];
+			$reason  = isset( $details['reason'] ) && is_string( $details['reason'] ) ? $details['reason'] : '';
+			if ( 'content_filter' === $reason ) {
+				return 'content_filter';
+			}
+			return 'length';
+		}
+
+		if ( 'failed' === $status || 'cancelled' === $status ) {
+			return 'content_filter';
+		}
+
+		return 'stop';
+	}
+
+	private function convert_responses_usage_to_chat_usage( $usage ): array {
+		if ( ! is_array( $usage ) ) {
+			return [
+				'prompt_tokens'     => 0,
+				'completion_tokens' => 0,
+				'total_tokens'      => 0,
+			];
+		}
+
+		$prompt_tokens     = isset( $usage['input_tokens'] ) && is_numeric( $usage['input_tokens'] ) ? (int) $usage['input_tokens'] : 0;
+		$completion_tokens = isset( $usage['output_tokens'] ) && is_numeric( $usage['output_tokens'] ) ? (int) $usage['output_tokens'] : 0;
+		$total_tokens      = isset( $usage['total_tokens'] ) && is_numeric( $usage['total_tokens'] ) ? (int) $usage['total_tokens'] : $prompt_tokens + $completion_tokens;
+
+		return [
+			'prompt_tokens'     => $prompt_tokens,
+			'completion_tokens' => $completion_tokens,
+			'total_tokens'      => $total_tokens,
 		];
 	}
 

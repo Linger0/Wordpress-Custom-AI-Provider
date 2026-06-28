@@ -19,7 +19,7 @@ Each model can use one of two endpoint types:
 * Responses-compatible endpoint: `/v1/responses`
 * Chat Completions-compatible endpoint: `/v1/chat/completions`
 
-For Responses-compatible models, the plugin adapts WordPress AI Client chat-style prompt payloads into the Responses API `input` format.
+For Responses-compatible models, the plugin adapts WordPress AI Client chat-style prompt payloads into the Responses API `input` format, then adapts Responses API output back into the chat-style response shape expected by the WordPress AI Client.
 
 = External Services =
 
