@@ -1,4 +1,4 @@
-=== Custom AI Responses Provider ===
+=== Custom AI Provider ===
 Contributors: linger0
 Tags: ai, artificial intelligence, openai, responses api, text generation
 Requires at least: 7.0
@@ -12,7 +12,7 @@ Adds a configurable AI provider for the WordPress AI Client with support for Res
 
 == Description ==
 
-Custom AI Responses Provider registers an AI provider for the WordPress AI Client. It lets site administrators configure a shared API base URL, an API key through WordPress Connectors, and multiple text generation models.
+Custom AI Provider registers an AI provider for the WordPress AI Client. It lets site administrators configure a shared API base URL, an API key through WordPress Connectors, and multiple text generation models.
 
 Each model can use one of two endpoint types:
 
@@ -38,8 +38,8 @@ If you configure another OpenAI-compatible gateway, review that service provider
 
 1. Upload the plugin files to the `/wp-content/plugins/my-openai-responses-provider` directory, or install the plugin ZIP through the WordPress Plugins screen.
 2. Activate the plugin through the `Plugins` screen in WordPress.
-3. Open `Settings > Connectors` and set the API key for `Custom AI Responses Provider`.
-4. Open `Settings > Custom AI Responses Provider`.
+3. Open `Settings > Connectors` and set the API key for `Custom AI Provider`.
+4. Open `Settings > Custom AI Provider`.
 5. Configure the API base URL and enabled model list.
 
 == Frequently Asked Questions ==

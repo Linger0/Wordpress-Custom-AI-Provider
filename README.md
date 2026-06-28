@@ -1,13 +1,6 @@
-# Custom AI Responses Provider
+# Custom AI Provider
 
 WordPress AI Client provider plugin for OpenAI-compatible text generation services, with per-model support for both the Responses API and Chat Completions API.
-
-## Repository
-
-- Suggested repository name: `wordpress-custom-ai-provider`
-- Suggested description: `WordPress AI Client provider for OpenAI-compatible Responses and Chat Completions endpoints.`
-- GitHub repository: `https://github.com/Linger0/Wordpress-Custom-AI-Provider`
-- Author: `Linger0`
 
 ## Features
 
@@ -42,10 +35,10 @@ WordPress.org submission flow:
 ## Installation
 
 1. Copy this plugin directory to `wp-content/plugins/my-openai-responses-provider`.
-2. Activate `Custom AI Responses Provider` in WordPress admin.
+2. Activate `Custom AI Provider` in WordPress admin.
 3. Open `Settings > Connectors`.
-4. Set the API key for `Custom AI Responses Provider`.
-5. Open `Settings > Custom AI Responses Provider`.
+4. Set the API key for `Custom AI Provider`.
+5. Open `Settings > Custom AI Provider`.
 6. Configure the API base URL and model list.
 
 ## Configuration
@@ -105,7 +98,7 @@ This means a `/v1/responses` request was sent without a Responses API `input` fi
 
 ### API key is not configured
 
-Open `Settings > Connectors` and set the key for `Custom AI Responses Provider`. For local development, you can also set `OPENAI_RESPONSES_API_KEY`.
+Open `Settings > Connectors` and set the key for `Custom AI Provider`. For local development, you can also set `OPENAI_RESPONSES_API_KEY`.
 
 ### Localhost endpoint requests fail
 

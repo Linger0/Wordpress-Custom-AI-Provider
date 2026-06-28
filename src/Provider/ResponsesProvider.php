@@ -44,7 +44,7 @@ class ResponsesProvider extends AbstractApiProvider {
 	protected static function createProviderMetadata(): ProviderMetadata {
 		$provider_metadata_args = [
 			'openai_responses',
-			__( 'Custom AI Responses Provider', 'my-openai-responses-provider' ),
+			__( 'Custom AI Provider', 'my-openai-responses-provider' ),
 			ProviderTypeEnum::cloud(),
 			'',
 			RequestAuthenticationMethod::apiKey(),

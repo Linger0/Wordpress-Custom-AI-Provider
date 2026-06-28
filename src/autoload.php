@@ -1,6 +1,6 @@
 <?php
 /**
- * PSR-4 autoloader for Custom AI Responses Provider.
+ * PSR-4 autoloader for Custom AI Provider.
  */
 
 declare( strict_types=1 );
