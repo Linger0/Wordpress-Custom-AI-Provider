@@ -18,6 +18,11 @@ The plugin registers a configurable AI provider that supports both Responses-com
 
 This plugin focuses on text generation provider integration. It does not implement a standalone AI interface, chat UI, or content generation workflow.
 
+## Community
+
+[LINUX DO](https://linux.do/)
+
 ## License
 
-GPL-2.0-or-later
+GPL-2.0
+
