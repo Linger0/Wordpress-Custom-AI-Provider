@@ -1,5 +1,5 @@
-=== Custom AI Provider ===
-Contributors: linger0
+=== AI Provider for Any OpenAI-Compatible Provider ===
+Contributors: linger0er
 Tags: ai, artificial intelligence, openai, responses api, text generation
 Requires at least: 7.0
 Tested up to: 7.0
@@ -8,11 +8,13 @@ Stable tag: 0.1.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Adds a configurable AI provider for the WordPress AI Client with support for Responses and Chat Completions compatible endpoints.
+Adds a configurable AI provider for the WordPress AI Client with support for OpenAI-compatible Responses and Chat Completions endpoints.
 
 == Description ==
 
-Custom AI Provider registers an AI provider for the WordPress AI Client. It lets site administrators configure a shared API base URL, an API key through WordPress Connectors, and multiple text generation models.
+AI Provider for Any OpenAI-Compatible Provider registers an AI provider for the WordPress AI Client. It lets site administrators configure a shared API base URL, an API key through WordPress Connectors, and multiple text generation models for a service that exposes OpenAI-compatible endpoints.
+
+This plugin is not affiliated with, endorsed by, sponsored by, or officially connected to OpenAI.
 
 Each model can use one of two endpoint types:
 
@@ -23,34 +25,34 @@ For Responses-compatible models, the plugin adapts WordPress AI Client chat-styl
 
 = External Services =
 
-This plugin sends text generation requests to the API endpoint configured by the site administrator. By default, that endpoint is `https://api.openai.com/v1`.
+This plugin sends text generation requests to the API endpoint configured by the site administrator. The plugin does not contact an AI service until an administrator enters an API base URL and configures credentials.
 
 Data sent to the configured service can include prompt text, system instructions, model configuration, and any other request fields provided by the WordPress AI Client for text generation.
 
-If you use OpenAI's API, your use is subject to OpenAI's terms and privacy policy:
+If the configured endpoint is OpenAI's API, usage is subject to OpenAI's terms and privacy policy:
 
 * Terms: https://openai.com/policies/terms-of-use
 * Privacy policy: https://openai.com/policies/privacy-policy
 
-If you configure another OpenAI-compatible gateway, review that service provider's terms and privacy policy.
+If another OpenAI-compatible gateway is configured, usage is subject to that service provider's terms and privacy policy.
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/my-openai-responses-provider` directory, or install the plugin ZIP through the WordPress Plugins screen.
+1. Upload the plugin files to the `/wp-content/plugins/ai-provider-for-any-openai-compatible-provider` directory, or install the plugin ZIP through the WordPress Plugins screen.
 2. Activate the plugin through the `Plugins` screen in WordPress.
-3. Open `Settings > Connectors` and set the API key for `Custom AI Provider`.
-4. Open `Settings > Custom AI Provider`.
+3. Open `Settings > Connectors` and set the API key for `AI Provider for Any OpenAI-Compatible Provider`.
+4. Open `Settings > AI Provider for Any OpenAI-Compatible Provider`.
 5. Configure the API base URL and enabled model list.
 
 == Frequently Asked Questions ==
 
-= Does this plugin require an OpenAI API key? =
+= Does this plugin require an API key? =
 
-It requires an API key for the service you configure. The default base URL points to OpenAI, but you can use another compatible gateway.
+It requires an API key for the OpenAI-compatible service configured by the site administrator.
 
 = Where is the API key stored? =
 
-The API key is stored through the WordPress Connectors settings for this provider. For local development, the plugin can also read `OPENAI_RESPONSES_API_KEY`.
+The API key is stored through the WordPress Connectors settings for this provider. For local development, the plugin can also read `AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_API_KEY`.
 
 = Why do I see "input is required"? =
 

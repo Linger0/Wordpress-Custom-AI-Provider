@@ -5,11 +5,11 @@
 
 declare( strict_types=1 );
 
-namespace MyOpenAiResponsesProvider\Provider;
+namespace AiProviderForAnyOpenAiCompatibleProvider\Provider;
 
-use MyOpenAiResponsesProvider\Metadata\ResponsesModelMetadataDirectory;
-use MyOpenAiResponsesProvider\Models\ResponsesTextGenerationModel;
-use MyOpenAiResponsesProvider\Settings\ResponsesSettings;
+use AiProviderForAnyOpenAiCompatibleProvider\Metadata\ResponsesModelMetadataDirectory;
+use AiProviderForAnyOpenAiCompatibleProvider\Models\ResponsesTextGenerationModel;
+use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiProvider;
 use WordPress\AiClient\Providers\Contracts\ModelMetadataDirectoryInterface;
@@ -21,10 +21,8 @@ use WordPress\AiClient\Providers\Models\Contracts\ModelInterface;
 use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
 
 class ResponsesProvider extends AbstractApiProvider {
-	private const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
-
 	protected static function baseUrl(): string {
-		$env_url = getenv( 'OPENAI_RESPONSES_BASE_URL' );
+		$env_url = getenv( 'AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_BASE_URL' );
 		if ( false !== $env_url && '' !== trim( $env_url ) ) {
 			return rtrim( (string) $env_url, '/' );
 		}
@@ -34,7 +32,7 @@ class ResponsesProvider extends AbstractApiProvider {
 			return rtrim( $settings_url, '/' );
 		}
 
-		return self::DEFAULT_BASE_URL;
+		return '';
 	}
 
 	protected static function createModel( ModelMetadata $model_metadata, ProviderMetadata $provider_metadata ): ModelInterface {
@@ -43,16 +41,16 @@ class ResponsesProvider extends AbstractApiProvider {
 
 	protected static function createProviderMetadata(): ProviderMetadata {
 		$provider_metadata_args = [
-			'openai_responses',
-			__( 'Custom AI Provider', 'my-openai-responses-provider' ),
+			'ai_provider_for_any_openai_compatible_provider',
+			__( 'AI Provider for Any OpenAI-Compatible Provider', 'ai-provider-for-any-openai-compatible-provider' ),
 			ProviderTypeEnum::cloud(),
 			'',
 			RequestAuthenticationMethod::apiKey(),
-			__( 'Configurable Responses and Chat Completions compatible text generation provider.', 'my-openai-responses-provider' ),
+			__( 'Configurable Responses and Chat Completions compatible text generation provider.', 'ai-provider-for-any-openai-compatible-provider' ),
 		];
 
 		if ( class_exists( AiClient::class ) && version_compare( AiClient::VERSION, '1.3.0', '>=' ) ) {
-			$provider_metadata_args[] = MY_OPENAI_RESPONSES_PROVIDER_PLUGIN_DIR . 'assets/images/responses-api.svg';
+			$provider_metadata_args[] = AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_PLUGIN_DIR . 'assets/images/ai-provider.svg';
 		}
 
 		return new ProviderMetadata( ...$provider_metadata_args );
@@ -61,7 +59,7 @@ class ResponsesProvider extends AbstractApiProvider {
 	protected static function createProviderAvailability(): ProviderAvailabilityInterface {
 		return new class implements ProviderAvailabilityInterface {
 			public function isConfigured(): bool {
-				return '' !== ResponsesSettings::get_api_key();
+				return '' !== ResponsesSettings::get_api_key() && '' !== ResponsesSettings::get_endpoint_url();
 			}
 		};
 	}

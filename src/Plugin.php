@@ -5,10 +5,10 @@
 
 declare( strict_types=1 );
 
-namespace MyOpenAiResponsesProvider;
+namespace AiProviderForAnyOpenAiCompatibleProvider;
 
-use MyOpenAiResponsesProvider\Provider\ResponsesProvider;
-use MyOpenAiResponsesProvider\Settings\ResponsesSettings;
+use AiProviderForAnyOpenAiCompatibleProvider\Provider\ResponsesProvider;
+use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
 
@@ -23,7 +23,7 @@ class Plugin {
 		add_action( 'init', [ $this, 'initialize_settings' ] );
 		add_action( 'init', [ $this, 'allow_localhost_requests' ], 20 );
 		add_action( 'wp_loaded', [ $this, 'setup_http_request_filters' ] );
-		add_filter( 'plugin_action_links_' . plugin_basename( MY_OPENAI_RESPONSES_PROVIDER_PLUGIN_FILE ), [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_PLUGIN_FILE ), [ $this, 'plugin_action_links' ] );
 	}
 
 	public function register_provider(): void {
@@ -45,18 +45,18 @@ class Plugin {
 		}
 
 		$registry = AiClient::defaultRegistry();
-		if ( ! $registry->hasProvider( 'openai_responses' ) ) {
+		if ( ! $registry->hasProvider( 'ai_provider_for_any_openai_compatible_provider' ) ) {
 			return;
 		}
 
-		$auth = $registry->getProviderRequestAuthentication( 'openai_responses' );
+		$auth = $registry->getProviderRequestAuthentication( 'ai_provider_for_any_openai_compatible_provider' );
 		if ( null !== $auth ) {
 			return;
 		}
 
-		$env_key = (string) getenv( 'OPENAI_RESPONSES_API_KEY' );
+		$env_key = (string) getenv( 'AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_API_KEY' );
 		$registry->setProviderRequestAuthentication(
-			'openai_responses',
+			'ai_provider_for_any_openai_compatible_provider',
 			new ApiKeyRequestAuthentication( $env_key )
 		);
 	}
@@ -66,7 +66,7 @@ class Plugin {
 		$settings->init();
 	}
 
-	public function allow_localhost_for_openai_responses( bool $external, string $host, string $url ): bool {
+	public function allow_localhost_for_ai_provider_for_any_openai_compatible_provider( bool $external, string $host, string $url ): bool {
 		if ( $external ) {
 			return true;
 		}
@@ -88,7 +88,7 @@ class Plugin {
 	}
 
 	public function setup_http_request_filters(): void {
-		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_openai_responses' ], 10, 3 );
+		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_ai_provider_for_any_openai_compatible_provider' ], 10, 3 );
 		add_filter( 'http_request_args', [ $this, 'modify_http_request_args' ], 10, 2 );
 	}
 
@@ -107,14 +107,14 @@ class Plugin {
 	}
 
 	public function allow_localhost_requests(): void {
-		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_openai_responses' ], 10, 3 );
+		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_ai_provider_for_any_openai_compatible_provider' ], 10, 3 );
 	}
 
 	public function plugin_action_links( array $links ): array {
 		$settings_link = sprintf(
 			'<a href="%1$s">%2$s</a>',
-			admin_url( 'options-general.php?page=my-openai-responses-provider' ),
-			esc_html__( 'Settings', 'my-openai-responses-provider' )
+			admin_url( 'options-general.php?page=ai-provider-for-any-openai-compatible-provider' ),
+			esc_html__( 'Settings', 'ai-provider-for-any-openai-compatible-provider' )
 		);
 
 		array_unshift( $links, $settings_link );

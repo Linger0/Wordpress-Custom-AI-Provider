@@ -5,7 +5,7 @@
 
 declare( strict_types=1 );
 
-namespace MyOpenAiResponsesProvider\Settings;
+namespace AiProviderForAnyOpenAiCompatibleProvider\Settings;
 
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
@@ -15,12 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class ResponsesSettings {
-	private const OPTION_GROUP     = 'my-openai-responses-provider-settings';
-	private const OPTION_NAME      = 'my_openai_responses_provider_settings';
-	private const PAGE_SLUG        = 'my-openai-responses-provider';
+	private const OPTION_GROUP     = 'ai-provider-for-any-openai-compatible-provider-settings';
+	private const OPTION_NAME      = 'ai_provider_for_any_openai_compatible_provider_settings';
+	private const PAGE_SLUG        = 'ai-provider-for-any-openai-compatible-provider';
 	private const KEY_ENDPOINT_URL = 'endpoint_url';
 	private const KEY_MODELS       = 'models';
-	private const DEFAULT_ENDPOINT = 'https://api.openai.com/v1';
+	private const DEFAULT_ENDPOINT = '';
 
 	public function init(): void {
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
@@ -38,29 +38,29 @@ class ResponsesSettings {
 			]
 		);
 
-		add_settings_section( 'my_openai_responses_provider_main', '', '__return_empty_string', self::PAGE_SLUG );
+		add_settings_section( 'ai_provider_for_any_openai_compatible_provider_main', '', '__return_empty_string', self::PAGE_SLUG );
 
 		add_settings_field(
 			self::OPTION_NAME . '_endpoint_url',
-			__( 'API Base URL', 'my-openai-responses-provider' ),
+			__( 'API Base URL', 'ai-provider-for-any-openai-compatible-provider' ),
 			[ $this, 'render_endpoint_field' ],
 			self::PAGE_SLUG,
-			'my_openai_responses_provider_main'
+			'ai_provider_for_any_openai_compatible_provider_main'
 		);
 
 		add_settings_field(
 			self::OPTION_NAME . '_models',
-			__( 'Models', 'my-openai-responses-provider' ),
+			__( 'Models', 'ai-provider-for-any-openai-compatible-provider' ),
 			[ $this, 'render_models_field' ],
 			self::PAGE_SLUG,
-			'my_openai_responses_provider_main'
+			'ai_provider_for_any_openai_compatible_provider_main'
 		);
 	}
 
 	public function register_settings_screen(): void {
 		add_options_page(
-			__( 'Custom AI Provider', 'my-openai-responses-provider' ),
-			__( 'Custom AI Provider', 'my-openai-responses-provider' ),
+			__( 'AI Provider for Any OpenAI-Compatible Provider', 'ai-provider-for-any-openai-compatible-provider' ),
+			__( 'AI Provider for Any OpenAI-Compatible Provider', 'ai-provider-for-any-openai-compatible-provider' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			[ $this, 'render_screen' ]
@@ -73,9 +73,6 @@ class ResponsesSettings {
 		}
 
 		$endpoint_url = isset( $value[ self::KEY_ENDPOINT_URL ] ) ? $this->sanitize_endpoint_url( (string) $value[ self::KEY_ENDPOINT_URL ] ) : self::DEFAULT_ENDPOINT;
-		if ( '' === $endpoint_url ) {
-			$endpoint_url = self::DEFAULT_ENDPOINT;
-		}
 
 		$models = [];
 		if ( isset( $value[ self::KEY_MODELS ] ) && is_array( $value[ self::KEY_MODELS ] ) ) {
@@ -144,11 +141,11 @@ class ResponsesSettings {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<p><?php esc_html_e( 'Configure a shared API base URL and multiple models. Each model can choose either /v1/responses or /v1/chat/completions.', 'my-openai-responses-provider' ); ?></p>
+			<p><?php esc_html_e( 'Configure a shared API base URL and multiple models. Each model can choose either /v1/responses or /v1/chat/completions.', 'ai-provider-for-any-openai-compatible-provider' ); ?></p>
 			<p>
 				<?php
 				printf(
-					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the Custom AI Provider connector.', 'my-openai-responses-provider' ),
+					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the AI Provider for Any OpenAI-Compatible Provider connector.', 'ai-provider-for-any-openai-compatible-provider' ),
 					'<a href="' . esc_url( admin_url( 'options-connectors.php' ) ) . '">',
 					'</a>'
 				);
@@ -169,7 +166,7 @@ class ResponsesSettings {
 		$settings = self::get_settings();
 		?>
 		<input type="url" class="regular-text code" name="<?php echo esc_attr( self::OPTION_NAME . '[' . self::KEY_ENDPOINT_URL . ']' ); ?>" value="<?php echo esc_attr( (string) $settings[ self::KEY_ENDPOINT_URL ] ); ?>" />
-		<p class="description"><?php esc_html_e( 'Example: https://api.openai.com/v1 or your own compatible gateway base URL.', 'my-openai-responses-provider' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Enter the base URL for your OpenAI-compatible service, including its API version path when required.', 'ai-provider-for-any-openai-compatible-provider' ); ?></p>
 		<?php
 	}
 
@@ -177,14 +174,14 @@ class ResponsesSettings {
 		$settings = self::get_settings();
 		$models   = isset( $settings[ self::KEY_MODELS ] ) && is_array( $settings[ self::KEY_MODELS ] ) ? $settings[ self::KEY_MODELS ] : [];
 		?>
-		<p class="description"><?php esc_html_e( 'Edit the models below. Leave enabled checked for models that should be registered into the WordPress AI Client.', 'my-openai-responses-provider' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Edit the models below. Leave enabled checked for models that should be registered into the WordPress AI Client.', 'ai-provider-for-any-openai-compatible-provider' ); ?></p>
 		<table class="widefat striped" style="max-width: 1000px; margin-top: 12px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Enabled', 'my-openai-responses-provider' ); ?></th>
-					<th><?php esc_html_e( 'Model ID', 'my-openai-responses-provider' ); ?></th>
-					<th><?php esc_html_e( 'Label', 'my-openai-responses-provider' ); ?></th>
-					<th><?php esc_html_e( 'Endpoint Type', 'my-openai-responses-provider' ); ?></th>
+					<th><?php esc_html_e( 'Enabled', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
+					<th><?php esc_html_e( 'Model ID', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
+					<th><?php esc_html_e( 'Label', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
+					<th><?php esc_html_e( 'Endpoint Type', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
 				</tr>
 				</thead>
 			<tbody>
@@ -203,7 +200,6 @@ class ResponsesSettings {
 				<?php endforeach; ?>
 			</tbody>
 		</table>
-		<p class="description" style="margin-top: 8px;"><?php esc_html_e( 'Need more models? Duplicate a row in the saved option or tell me and I will add a dynamic repeater UI in the next revision.', 'my-openai-responses-provider' ); ?></p>
 		<?php
 	}
 
@@ -222,16 +218,16 @@ class ResponsesSettings {
 	private static function get_default_models(): array {
 		return [
 			[
-				'id'            => 'gpt-4.1',
-				'label'         => 'gpt-4.1',
+				'id'            => 'responses-model-id',
+				'label'         => 'Responses model',
 				'endpoint_type' => 'responses',
-				'enabled'       => true,
+				'enabled'       => false,
 			],
 			[
-				'id'            => 'gpt-4o-mini',
-				'label'         => 'gpt-4o-mini',
+				'id'            => 'chat-completions-model-id',
+				'label'         => 'Chat Completions model',
 				'endpoint_type' => 'chat_completions',
-				'enabled'       => true,
+				'enabled'       => false,
 			],
 		];
 	}
@@ -270,7 +266,7 @@ class ResponsesSettings {
 		$settings = self::get_settings();
 		$url      = (string) $settings[ self::KEY_ENDPOINT_URL ];
 		if ( '' === trim( $url ) ) {
-			return self::DEFAULT_ENDPOINT;
+			return '';
 		}
 		return rtrim( $url, '/' );
 	}
@@ -278,15 +274,15 @@ class ResponsesSettings {
 	public static function get_api_key(): string {
 		if ( class_exists( AiClient::class ) ) {
 			$registry = AiClient::defaultRegistry();
-			if ( $registry->hasProvider( 'openai_responses' ) ) {
-				$auth = $registry->getProviderRequestAuthentication( 'openai_responses' );
+			if ( $registry->hasProvider( 'ai_provider_for_any_openai_compatible_provider' ) ) {
+				$auth = $registry->getProviderRequestAuthentication( 'ai_provider_for_any_openai_compatible_provider' );
 				if ( $auth instanceof ApiKeyRequestAuthentication ) {
 					return (string) $auth->getApiKey();
 				}
 			}
 		}
 
-		$env_key = getenv( 'OPENAI_RESPONSES_API_KEY' );
+		$env_key = getenv( 'AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_API_KEY' );
 		if ( false === $env_key ) {
 			return '';
 		}

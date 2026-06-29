@@ -1,8 +1,8 @@
-# Custom AI Provider
+# AI Provider for Any OpenAI-Compatible Provider
 
-Custom AI Provider is a WordPress AI Client provider plugin for OpenAI-compatible text generation services.
+AI Provider for Any OpenAI-Compatible Provider is a WordPress AI Client provider plugin for text generation services that expose OpenAI-compatible endpoints.
 
-The plugin registers a configurable AI provider that supports both Responses-compatible and Chat Completions-compatible endpoints. It is designed for sites that need to connect the WordPress AI Client to OpenAI or to an OpenAI-compatible gateway with custom model and base URL settings.
+The plugin registers a configurable AI provider that supports both Responses-compatible and Chat Completions-compatible endpoints. It is designed for sites that need to connect the WordPress AI Client to an administrator-configured service with custom model and base URL settings.
 
 ## Features
 
