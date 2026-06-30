@@ -1,6 +1,6 @@
-# AI Provider for Any OpenAI-Compatible Provider
+# Linger AI Bridge for OpenAI-Compatible APIs
 
-AI Provider for Any OpenAI-Compatible Provider is a WordPress AI Client provider plugin for text generation services that expose OpenAI-compatible endpoints.
+Linger AI Bridge for OpenAI-Compatible APIs is a WordPress AI Client provider plugin for text generation services that expose OpenAI-compatible endpoints.
 
 The plugin registers a configurable AI provider that supports both Responses-compatible and Chat Completions-compatible endpoints. It is designed for sites that need to connect the WordPress AI Client to an administrator-configured service with custom model and base URL settings.
 

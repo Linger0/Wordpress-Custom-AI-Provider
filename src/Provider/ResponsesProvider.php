@@ -5,11 +5,11 @@
 
 declare( strict_types=1 );
 
-namespace AiProviderForAnyOpenAiCompatibleProvider\Provider;
+namespace LingerAiBridgeForOpenAiCompatibleApis\Provider;
 
-use AiProviderForAnyOpenAiCompatibleProvider\Metadata\ResponsesModelMetadataDirectory;
-use AiProviderForAnyOpenAiCompatibleProvider\Models\ResponsesTextGenerationModel;
-use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
+use LingerAiBridgeForOpenAiCompatibleApis\Metadata\ResponsesModelMetadataDirectory;
+use LingerAiBridgeForOpenAiCompatibleApis\Models\ResponsesTextGenerationModel;
+use LingerAiBridgeForOpenAiCompatibleApis\Settings\ResponsesSettings;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiProvider;
 use WordPress\AiClient\Providers\Contracts\ModelMetadataDirectoryInterface;
@@ -22,7 +22,7 @@ use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
 
 class ResponsesProvider extends AbstractApiProvider {
 	protected static function baseUrl(): string {
-		$env_url = getenv( 'AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_BASE_URL' );
+		$env_url = getenv( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_BASE_URL' );
 		if ( false !== $env_url && '' !== trim( $env_url ) ) {
 			return rtrim( (string) $env_url, '/' );
 		}
@@ -41,16 +41,16 @@ class ResponsesProvider extends AbstractApiProvider {
 
 	protected static function createProviderMetadata(): ProviderMetadata {
 		$provider_metadata_args = [
-			'ai_provider_for_any_openai_compatible_provider',
-			__( 'AI Provider for Any OpenAI-Compatible Provider', 'ai-provider-for-any-openai-compatible-provider' ),
+			'linger_ai_bridge_for_openai_compatible_apis',
+			__( 'Linger AI Bridge for OpenAI-Compatible APIs', 'linger-ai-bridge-for-openai-compatible-apis' ),
 			ProviderTypeEnum::cloud(),
 			'',
 			RequestAuthenticationMethod::apiKey(),
-			__( 'Configurable Responses and Chat Completions compatible text generation provider.', 'ai-provider-for-any-openai-compatible-provider' ),
+			__( 'Configurable Responses and Chat Completions compatible text generation provider.', 'linger-ai-bridge-for-openai-compatible-apis' ),
 		];
 
 		if ( class_exists( AiClient::class ) && version_compare( AiClient::VERSION, '1.3.0', '>=' ) ) {
-			$provider_metadata_args[] = AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_PLUGIN_DIR . 'assets/images/ai-provider.svg';
+			$provider_metadata_args[] = LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_DIR . 'assets/images/linger-ai-bridge.svg';
 		}
 
 		return new ProviderMetadata( ...$provider_metadata_args );

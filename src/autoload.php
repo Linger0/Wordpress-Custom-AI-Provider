@@ -1,6 +1,6 @@
 <?php
 /**
- * PSR-4 autoloader for AI Provider for Any OpenAI-Compatible Provider.
+ * PSR-4 autoloader for Linger AI Bridge for OpenAI-Compatible APIs.
  */
 
 declare( strict_types=1 );
@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 spl_autoload_register(
 	static function ( string $class_name ): void {
-		$prefix   = 'AiProviderForAnyOpenAiCompatibleProvider\\';
+		$prefix   = 'LingerAiBridgeForOpenAiCompatibleApis\\';
 		$base_dir = __DIR__ . '/';
 
 		$len = strlen( $prefix );

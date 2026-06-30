@@ -5,10 +5,10 @@
 
 declare( strict_types=1 );
 
-namespace AiProviderForAnyOpenAiCompatibleProvider;
+namespace LingerAiBridgeForOpenAiCompatibleApis;
 
-use AiProviderForAnyOpenAiCompatibleProvider\Provider\ResponsesProvider;
-use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
+use LingerAiBridgeForOpenAiCompatibleApis\Provider\ResponsesProvider;
+use LingerAiBridgeForOpenAiCompatibleApis\Settings\ResponsesSettings;
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
 
@@ -23,7 +23,7 @@ class Plugin {
 		add_action( 'init', [ $this, 'initialize_settings' ] );
 		add_action( 'init', [ $this, 'allow_localhost_requests' ], 20 );
 		add_action( 'wp_loaded', [ $this, 'setup_http_request_filters' ] );
-		add_filter( 'plugin_action_links_' . plugin_basename( AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_PLUGIN_FILE ), [ $this, 'plugin_action_links' ] );
+		add_filter( 'plugin_action_links_' . plugin_basename( LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_FILE ), [ $this, 'plugin_action_links' ] );
 	}
 
 	public function register_provider(): void {
@@ -45,18 +45,18 @@ class Plugin {
 		}
 
 		$registry = AiClient::defaultRegistry();
-		if ( ! $registry->hasProvider( 'ai_provider_for_any_openai_compatible_provider' ) ) {
+		if ( ! $registry->hasProvider( 'linger_ai_bridge_for_openai_compatible_apis' ) ) {
 			return;
 		}
 
-		$auth = $registry->getProviderRequestAuthentication( 'ai_provider_for_any_openai_compatible_provider' );
+		$auth = $registry->getProviderRequestAuthentication( 'linger_ai_bridge_for_openai_compatible_apis' );
 		if ( null !== $auth ) {
 			return;
 		}
 
-		$env_key = (string) getenv( 'AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_API_KEY' );
+		$env_key = (string) getenv( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_API_KEY' );
 		$registry->setProviderRequestAuthentication(
-			'ai_provider_for_any_openai_compatible_provider',
+			'linger_ai_bridge_for_openai_compatible_apis',
 			new ApiKeyRequestAuthentication( $env_key )
 		);
 	}
@@ -66,7 +66,7 @@ class Plugin {
 		$settings->init();
 	}
 
-	public function allow_localhost_for_ai_provider_for_any_openai_compatible_provider( bool $external, string $host, string $url ): bool {
+	public function allow_localhost_for_linger_ai_bridge_for_openai_compatible_apis( bool $external, string $host, string $url ): bool {
 		if ( $external ) {
 			return true;
 		}
@@ -88,7 +88,7 @@ class Plugin {
 	}
 
 	public function setup_http_request_filters(): void {
-		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_ai_provider_for_any_openai_compatible_provider' ], 10, 3 );
+		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_linger_ai_bridge_for_openai_compatible_apis' ], 10, 3 );
 		add_filter( 'http_request_args', [ $this, 'modify_http_request_args' ], 10, 2 );
 	}
 
@@ -107,14 +107,14 @@ class Plugin {
 	}
 
 	public function allow_localhost_requests(): void {
-		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_ai_provider_for_any_openai_compatible_provider' ], 10, 3 );
+		add_filter( 'http_request_host_is_external', [ $this, 'allow_localhost_for_linger_ai_bridge_for_openai_compatible_apis' ], 10, 3 );
 	}
 
 	public function plugin_action_links( array $links ): array {
 		$settings_link = sprintf(
 			'<a href="%1$s">%2$s</a>',
-			admin_url( 'options-general.php?page=ai-provider-for-any-openai-compatible-provider' ),
-			esc_html__( 'Settings', 'ai-provider-for-any-openai-compatible-provider' )
+			admin_url( 'options-general.php?page=linger-ai-bridge-for-openai-compatible-apis' ),
+			esc_html__( 'Settings', 'linger-ai-bridge-for-openai-compatible-apis' )
 		);
 
 		array_unshift( $links, $settings_link );

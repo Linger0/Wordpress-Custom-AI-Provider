@@ -1,4 +1,4 @@
-=== AI Provider for Any OpenAI-Compatible Provider ===
+=== Linger AI Bridge for OpenAI-Compatible APIs ===
 Contributors: linger0er
 Tags: ai, artificial intelligence, openai, responses api, text generation
 Requires at least: 7.0
@@ -12,7 +12,7 @@ Adds a configurable AI provider for the WordPress AI Client with support for Ope
 
 == Description ==
 
-AI Provider for Any OpenAI-Compatible Provider registers an AI provider for the WordPress AI Client. It lets site administrators configure a shared API base URL, an API key through WordPress Connectors, and multiple text generation models for a service that exposes OpenAI-compatible endpoints.
+Linger AI Bridge for OpenAI-Compatible APIs registers an AI provider for the WordPress AI Client. It lets site administrators configure a shared API base URL, an API key through WordPress Connectors, and multiple text generation models for a service that exposes OpenAI-compatible endpoints.
 
 This plugin is not affiliated with, endorsed by, sponsored by, or officially connected to OpenAI.
 
@@ -38,10 +38,10 @@ If another OpenAI-compatible gateway is configured, usage is subject to that ser
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/ai-provider-for-any-openai-compatible-provider` directory, or install the plugin ZIP through the WordPress Plugins screen.
+1. Upload the plugin files to the `/wp-content/plugins/linger-ai-bridge-for-openai-compatible-apis` directory, or install the plugin ZIP through the WordPress Plugins screen.
 2. Activate the plugin through the `Plugins` screen in WordPress.
-3. Open `Settings > Connectors` and set the API key for `AI Provider for Any OpenAI-Compatible Provider`.
-4. Open `Settings > AI Provider for Any OpenAI-Compatible Provider`.
+3. Open `Settings > Connectors` and set the API key for `Linger AI Bridge for OpenAI-Compatible APIs`.
+4. Open `Settings > Linger AI Bridge for OpenAI-Compatible APIs`.
 5. Configure the API base URL and enabled model list.
 
 == Frequently Asked Questions ==
@@ -52,7 +52,7 @@ It requires an API key for the OpenAI-compatible service configured by the site 
 
 = Where is the API key stored? =
 
-The API key is stored through the WordPress Connectors settings for this provider. For local development, the plugin can also read `AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_API_KEY`.
+The API key is stored through the WordPress Connectors settings for this provider. For local development, the plugin can also read `LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_API_KEY`.
 
 = Why do I see "input is required"? =
 

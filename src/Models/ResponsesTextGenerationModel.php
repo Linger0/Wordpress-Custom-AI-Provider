@@ -5,9 +5,9 @@
 
 declare( strict_types=1 );
 
-namespace AiProviderForAnyOpenAiCompatibleProvider\Models;
+namespace LingerAiBridgeForOpenAiCompatibleApis\Models;
 
-use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
+use LingerAiBridgeForOpenAiCompatibleApis\Settings\ResponsesSettings;
 use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
 use WordPress\AiClient\Providers\Http\DTO\Response;
@@ -42,7 +42,7 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 			unset( $params['response_format'] );
 		}
 
-		return apply_filters( 'ai_provider_for_any_openai_compatible_provider_text_generation_params', $params, $this->metadata()->getId(), $this->get_endpoint_type() );
+		return apply_filters( 'linger_ai_bridge_for_openai_compatible_apis_text_generation_params', $params, $this->metadata()->getId(), $this->get_endpoint_type() );
 	}
 
 	protected function prepareResponseFormatParam( ?array $output_schema ): array {

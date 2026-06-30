@@ -5,7 +5,7 @@
 
 declare( strict_types=1 );
 
-namespace AiProviderForAnyOpenAiCompatibleProvider\Settings;
+namespace LingerAiBridgeForOpenAiCompatibleApis\Settings;
 
 use WordPress\AiClient\AiClient;
 use WordPress\AiClient\Providers\Http\DTO\ApiKeyRequestAuthentication;
@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 class ResponsesSettings {
-	private const OPTION_GROUP     = 'ai-provider-for-any-openai-compatible-provider-settings';
-	private const OPTION_NAME      = 'ai_provider_for_any_openai_compatible_provider_settings';
-	private const PAGE_SLUG        = 'ai-provider-for-any-openai-compatible-provider';
+	private const OPTION_GROUP     = 'linger-ai-bridge-for-openai-compatible-apis-settings';
+	private const OPTION_NAME      = 'linger_ai_bridge_for_openai_compatible_apis_settings';
+	private const PAGE_SLUG        = 'linger-ai-bridge-for-openai-compatible-apis';
 	private const KEY_ENDPOINT_URL = 'endpoint_url';
 	private const KEY_MODELS       = 'models';
 	private const DEFAULT_ENDPOINT = '';
@@ -38,29 +38,29 @@ class ResponsesSettings {
 			]
 		);
 
-		add_settings_section( 'ai_provider_for_any_openai_compatible_provider_main', '', '__return_empty_string', self::PAGE_SLUG );
+		add_settings_section( 'linger_ai_bridge_for_openai_compatible_apis_main', '', '__return_empty_string', self::PAGE_SLUG );
 
 		add_settings_field(
 			self::OPTION_NAME . '_endpoint_url',
-			__( 'API Base URL', 'ai-provider-for-any-openai-compatible-provider' ),
+			__( 'API Base URL', 'linger-ai-bridge-for-openai-compatible-apis' ),
 			[ $this, 'render_endpoint_field' ],
 			self::PAGE_SLUG,
-			'ai_provider_for_any_openai_compatible_provider_main'
+			'linger_ai_bridge_for_openai_compatible_apis_main'
 		);
 
 		add_settings_field(
 			self::OPTION_NAME . '_models',
-			__( 'Models', 'ai-provider-for-any-openai-compatible-provider' ),
+			__( 'Models', 'linger-ai-bridge-for-openai-compatible-apis' ),
 			[ $this, 'render_models_field' ],
 			self::PAGE_SLUG,
-			'ai_provider_for_any_openai_compatible_provider_main'
+			'linger_ai_bridge_for_openai_compatible_apis_main'
 		);
 	}
 
 	public function register_settings_screen(): void {
 		add_options_page(
-			__( 'AI Provider for Any OpenAI-Compatible Provider', 'ai-provider-for-any-openai-compatible-provider' ),
-			__( 'AI Provider for Any OpenAI-Compatible Provider', 'ai-provider-for-any-openai-compatible-provider' ),
+			__( 'Linger AI Bridge for OpenAI-Compatible APIs', 'linger-ai-bridge-for-openai-compatible-apis' ),
+			__( 'Linger AI Bridge for OpenAI-Compatible APIs', 'linger-ai-bridge-for-openai-compatible-apis' ),
 			'manage_options',
 			self::PAGE_SLUG,
 			[ $this, 'render_screen' ]
@@ -141,11 +141,11 @@ class ResponsesSettings {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<p><?php esc_html_e( 'Configure a shared API base URL and multiple models. Each model can choose either /v1/responses or /v1/chat/completions.', 'ai-provider-for-any-openai-compatible-provider' ); ?></p>
+			<p><?php esc_html_e( 'Configure a shared API base URL and multiple models. Each model can choose either /v1/responses or /v1/chat/completions.', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></p>
 			<p>
 				<?php
 				printf(
-					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the AI Provider for Any OpenAI-Compatible Provider connector.', 'ai-provider-for-any-openai-compatible-provider' ),
+					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the Linger AI Bridge for OpenAI-Compatible APIs connector.', 'linger-ai-bridge-for-openai-compatible-apis' ),
 					'<a href="' . esc_url( admin_url( 'options-connectors.php' ) ) . '">',
 					'</a>'
 				);
@@ -166,7 +166,7 @@ class ResponsesSettings {
 		$settings = self::get_settings();
 		?>
 		<input type="url" class="regular-text code" name="<?php echo esc_attr( self::OPTION_NAME . '[' . self::KEY_ENDPOINT_URL . ']' ); ?>" value="<?php echo esc_attr( (string) $settings[ self::KEY_ENDPOINT_URL ] ); ?>" />
-		<p class="description"><?php esc_html_e( 'Enter the base URL for your OpenAI-compatible service, including its API version path when required.', 'ai-provider-for-any-openai-compatible-provider' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Enter the base URL for your OpenAI-compatible service, including its API version path when required.', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></p>
 		<?php
 	}
 
@@ -174,14 +174,14 @@ class ResponsesSettings {
 		$settings = self::get_settings();
 		$models   = isset( $settings[ self::KEY_MODELS ] ) && is_array( $settings[ self::KEY_MODELS ] ) ? $settings[ self::KEY_MODELS ] : [];
 		?>
-		<p class="description"><?php esc_html_e( 'Edit the models below. Leave enabled checked for models that should be registered into the WordPress AI Client.', 'ai-provider-for-any-openai-compatible-provider' ); ?></p>
+		<p class="description"><?php esc_html_e( 'Edit the models below. Leave enabled checked for models that should be registered into the WordPress AI Client.', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></p>
 		<table class="widefat striped" style="max-width: 1000px; margin-top: 12px;">
 			<thead>
 				<tr>
-					<th><?php esc_html_e( 'Enabled', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
-					<th><?php esc_html_e( 'Model ID', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
-					<th><?php esc_html_e( 'Label', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
-					<th><?php esc_html_e( 'Endpoint Type', 'ai-provider-for-any-openai-compatible-provider' ); ?></th>
+					<th><?php esc_html_e( 'Enabled', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
+					<th><?php esc_html_e( 'Model ID', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
+					<th><?php esc_html_e( 'Label', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
+					<th><?php esc_html_e( 'Endpoint Type', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
 				</tr>
 				</thead>
 			<tbody>
@@ -274,15 +274,15 @@ class ResponsesSettings {
 	public static function get_api_key(): string {
 		if ( class_exists( AiClient::class ) ) {
 			$registry = AiClient::defaultRegistry();
-			if ( $registry->hasProvider( 'ai_provider_for_any_openai_compatible_provider' ) ) {
-				$auth = $registry->getProviderRequestAuthentication( 'ai_provider_for_any_openai_compatible_provider' );
+			if ( $registry->hasProvider( 'linger_ai_bridge_for_openai_compatible_apis' ) ) {
+				$auth = $registry->getProviderRequestAuthentication( 'linger_ai_bridge_for_openai_compatible_apis' );
 				if ( $auth instanceof ApiKeyRequestAuthentication ) {
 					return (string) $auth->getApiKey();
 				}
 			}
 		}
 
-		$env_key = getenv( 'AI_PROVIDER_FOR_ANY_OPENAI_COMPATIBLE_PROVIDER_API_KEY' );
+		$env_key = getenv( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_API_KEY' );
 		if ( false === $env_key ) {
 			return '';
 		}

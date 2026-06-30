@@ -5,9 +5,9 @@
 
 declare( strict_types=1 );
 
-namespace AiProviderForAnyOpenAiCompatibleProvider\Metadata;
+namespace LingerAiBridgeForOpenAiCompatibleApis\Metadata;
 
-use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
+use LingerAiBridgeForOpenAiCompatibleApis\Settings\ResponsesSettings;
 use WordPress\AiClient\Messages\Enums\ModalityEnum;
 use WordPress\AiClient\Providers\ApiBasedImplementation\AbstractApiBasedModelMetadataDirectory;
 use WordPress\AiClient\Providers\Models\DTO\ModelMetadata;
