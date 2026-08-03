@@ -38,7 +38,7 @@ If another OpenAI-compatible gateway is configured, usage is subject to that ser
 
 == Installation ==
 
-1. Upload the plugin files to the `/wp-content/plugins/linger-ai-bridge-for-openai-compatible-apis` directory, or install the plugin ZIP through the WordPress Plugins screen.
+1. Install the plugin ZIP through the WordPress Plugins screen.
 2. Activate the plugin through the `Plugins` screen in WordPress.
 3. Open `Settings > Connectors` and set the API key for `Linger AI Bridge for OpenAI-Compatible APIs`.
 4. Open `Settings > Linger AI Bridge for OpenAI-Compatible APIs`.
@@ -52,11 +52,7 @@ It requires an API key for the OpenAI-compatible service configured by the site 
 
 = Where is the API key stored? =
 
-The API key is stored through the WordPress Connectors settings for this provider. For local development, the plugin can also read `LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_API_KEY`.
-
-= Why do I see "input is required"? =
-
-That error means a Responses API request was sent without the required `input` field. This plugin adapts WordPress AI Client `messages` payloads into Responses API `input` payloads for models configured to use `/v1/responses`.
+The API key is stored through the WordPress Connectors settings for this provider.
 
 = Can I use a local gateway? =
 
