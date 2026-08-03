@@ -4,7 +4,7 @@
  * Description:       AI provider for the WordPress AI Client with configurable Responses and Chat Completions endpoints.
  * Requires at least: 7.0
  * Requires PHP:      7.4
- * Version:           0.1.1
+ * Version:           0.1.2
  * Author:            Linger0
  * Author URI:        https://github.com/Linger0
  * License:           GPL-2.0
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_VERSION', '0.1.1' );
+define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_VERSION', '0.1.2' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_PHP_VERSION', '7.4' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_WP_VERSION', '7.0' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

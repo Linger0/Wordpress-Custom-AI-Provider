@@ -4,7 +4,7 @@ Tags: ai, artificial intelligence, openai, responses api, text generation
 Requires at least: 7.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.1
+Stable tag: 0.1.2
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -63,6 +63,10 @@ Yes. Configure the base URL as a full HTTP URL such as `http://localhost:1234/v1
 1. Provider settings screen for configuring the API base URL and models.
 
 == Changelog ==
+
+= 0.1.2 =
+* Clarify the public installation instructions.
+* Remove developer-only troubleshooting and local development details from the FAQ.
 
 = 0.1.1 =
 * Remove the unsupported `temperature` parameter from Responses API requests.
