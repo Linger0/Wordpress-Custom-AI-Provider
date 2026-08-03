@@ -4,8 +4,8 @@ Tags: ai, artificial intelligence, openai, responses api, text generation
 Requires at least: 7.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.0
-License: GPLv2 or later
+Stable tag: 0.1.1
+License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
 Adds a configurable AI provider for the WordPress AI Client with support for OpenAI-compatible Responses and Chat Completions endpoints.
@@ -67,6 +67,10 @@ Yes. Configure the base URL as a full HTTP URL such as `http://localhost:1234/v1
 1. Provider settings screen for configuring the API base URL and models.
 
 == Changelog ==
+
+= 0.1.1 =
+* Remove the unsupported `temperature` parameter from Responses API requests.
+* Clarify that the plugin is licensed under GPLv2.
 
 = 0.1.0 =
 * Initial release.

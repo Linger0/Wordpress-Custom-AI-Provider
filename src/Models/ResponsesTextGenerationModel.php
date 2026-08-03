@@ -42,7 +42,14 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 			unset( $params['response_format'] );
 		}
 
-		return apply_filters( 'linger_ai_bridge_for_openai_compatible_apis_text_generation_params', $params, $this->metadata()->getId(), $this->get_endpoint_type() );
+		$params = apply_filters( 'linger_ai_bridge_for_openai_compatible_apis_text_generation_params', $params, $this->metadata()->getId(), $this->get_endpoint_type() );
+
+		if ( $this->uses_responses_api() ) {
+			// Some Responses API models reject this parameter entirely.
+			unset( $params['temperature'] );
+		}
+
+		return $params;
 	}
 
 	protected function prepareResponseFormatParam( ?array $output_schema ): array {

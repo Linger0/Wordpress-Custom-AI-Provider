@@ -20,4 +20,4 @@ This plugin focuses on text generation provider integration. It does not impleme
 
 ## License
 
-GPL-2.0-or-later
+GPL-2.0
