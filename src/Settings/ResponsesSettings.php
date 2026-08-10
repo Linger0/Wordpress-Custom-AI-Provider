@@ -85,6 +85,7 @@ class ResponsesSettings {
 				$label    = isset( $row['label'] ) ? sanitize_text_field( trim( (string) $row['label'] ) ) : '';
 				$endpoint = isset( $row['endpoint_type'] ) ? sanitize_text_field( trim( (string) $row['endpoint_type'] ) ) : 'responses';
 				$enabled  = ! empty( $row['enabled'] );
+				$stream   = ! empty( $row['stream'] );
 
 				if ( '' === $id ) {
 					continue;
@@ -99,6 +100,7 @@ class ResponsesSettings {
 					'label'         => '' !== $label ? $label : $id,
 					'endpoint_type' => $endpoint,
 					'enabled'       => $enabled,
+					'stream'        => $stream,
 				];
 			}
 		}
@@ -182,6 +184,7 @@ class ResponsesSettings {
 					<th><?php esc_html_e( 'Model ID', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
 					<th><?php esc_html_e( 'Label', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
 					<th><?php esc_html_e( 'Endpoint Type', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
+					<th><?php esc_html_e( 'Streaming', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></th>
 				</tr>
 				</thead>
 			<tbody>
@@ -195,6 +198,10 @@ class ResponsesSettings {
 								<option value="responses" <?php selected( (string) $model['endpoint_type'], 'responses' ); ?>>/v1/responses</option>
 								<option value="chat_completions" <?php selected( (string) $model['endpoint_type'], 'chat_completions' ); ?>>/v1/chat/completions</option>
 							</select>
+						</td>
+						<td>
+							<input type="checkbox" name="<?php echo esc_attr( self::OPTION_NAME . '[' . self::KEY_MODELS . '][' . $index . '][stream]' ); ?>" value="1" <?php checked( ! empty( $model['stream'] ) ); ?> />
+							<span class="screen-reader-text"><?php esc_html_e( 'Use a streaming response', 'linger-ai-bridge-for-openai-compatible-apis' ); ?></span>
 						</td>
 					</tr>
 				<?php endforeach; ?>
@@ -222,12 +229,14 @@ class ResponsesSettings {
 				'label'         => 'Responses model',
 				'endpoint_type' => 'responses',
 				'enabled'       => false,
+				'stream'        => false,
 			],
 			[
 				'id'            => 'chat-completions-model-id',
 				'label'         => 'Chat Completions model',
 				'endpoint_type' => 'chat_completions',
 				'enabled'       => false,
+				'stream'        => false,
 			],
 		];
 	}
@@ -260,6 +269,11 @@ class ResponsesSettings {
 			return 'responses';
 		}
 		return isset( $model['endpoint_type'] ) && 'chat_completions' === $model['endpoint_type'] ? 'chat_completions' : 'responses';
+	}
+
+	public static function uses_streaming_for_model( string $model_id ): bool {
+		$model = self::get_model_config( $model_id );
+		return is_array( $model ) && self::get_endpoint_type_for_model( $model_id ) === 'responses' && ! empty( $model['stream'] );
 	}
 
 	public static function get_endpoint_url(): string {

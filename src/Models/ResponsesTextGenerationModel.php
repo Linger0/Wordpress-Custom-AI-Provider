@@ -12,6 +12,7 @@ use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
 use WordPress\AiClient\Providers\Http\DTO\Response;
 use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
+use WordPress\AiClient\Providers\Http\Exception\ResponseException;
 use WordPress\AiClient\Providers\OpenAiCompatibleImplementation\AbstractOpenAiCompatibleTextGenerationModel;
 use WordPress\AiClient\Results\DTO\GenerativeAiResult;
 
@@ -47,6 +48,12 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 		if ( $this->uses_responses_api() ) {
 			// Some Responses API models reject this parameter entirely.
 			unset( $params['temperature'] );
+
+			if ( $this->uses_streaming_responses_api() ) {
+				$params['stream'] = true;
+			} else {
+				unset( $params['stream'] );
+			}
 		}
 
 		return $params;
@@ -200,6 +207,10 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 			return parent::parseResponseToGenerativeAiResult( $response );
 		}
 
+		if ( $this->uses_streaming_responses_api() ) {
+			$response = $this->convert_streaming_responses_response_to_response( $response );
+		}
+
 		$response_data = $response->getData();
 		if ( is_array( $response_data ) && isset( $response_data['choices'] ) ) {
 			return parent::parseResponseToGenerativeAiResult( $response );
@@ -208,6 +219,127 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 		return parent::parseResponseToGenerativeAiResult(
 			$this->convert_responses_response_to_chat_completions_response( $response )
 		);
+	}
+
+	private function convert_streaming_responses_response_to_response( Response $response ): Response {
+		$body = $response->getBody();
+		if ( ! is_string( $body ) || '' === trim( $body ) ) {
+			throw ResponseException::fromMissingData( $this->providerMetadata()->getName(), 'stream' );
+		}
+
+		$decoded_body = json_decode( $body, true );
+		if ( is_array( $decoded_body ) ) {
+			return $response;
+		}
+
+		$response_data = [];
+		$text_deltas   = [];
+		$completed_text = null;
+		$completed      = false;
+
+		foreach ( $this->parse_server_sent_events( $body ) as $event ) {
+			$event_data = json_decode( $event['data'], true );
+			if ( ! is_array( $event_data ) ) {
+				continue;
+			}
+
+			$event_type = isset( $event_data['type'] ) && is_string( $event_data['type'] ) ? $event_data['type'] : $event['event'];
+			if ( 'error' === $event_type ) {
+				$message = 'The streaming response contained an error event.';
+				if ( isset( $event_data['message'] ) && is_string( $event_data['message'] ) ) {
+					$message = $event_data['message'];
+				} elseif ( isset( $event_data['error']['message'] ) && is_string( $event_data['error']['message'] ) ) {
+					$message = $event_data['error']['message'];
+				}
+				throw ResponseException::fromInvalidData( $this->providerMetadata()->getName(), 'stream', $message );
+			}
+
+			if ( 'response.completed' === $event_type ) {
+				$completed = true;
+			}
+
+			if ( isset( $event_data['response'] ) && is_array( $event_data['response'] ) ) {
+				$response_data = $event_data['response'];
+			}
+
+			if ( ( 'response.output_text.delta' === $event_type || 'response.refusal.delta' === $event_type ) && isset( $event_data['delta'] ) && is_string( $event_data['delta'] ) ) {
+				$text_deltas[] = $event_data['delta'];
+			}
+
+			if ( ( 'response.output_text.done' === $event_type || 'response.refusal.done' === $event_type ) && isset( $event_data['text'] ) && is_string( $event_data['text'] ) ) {
+				$completed_text = $event_data['text'];
+			}
+		}
+
+		$text = [] !== $text_deltas ? implode( '', $text_deltas ) : $completed_text;
+		if ( [] === $response_data && ! is_string( $text ) ) {
+			throw ResponseException::fromMissingData( $this->providerMetadata()->getName(), 'response.completed' );
+		}
+
+		if ( ! isset( $response_data['output_text'] ) && is_string( $text ) ) {
+			$response_data['output_text'] = $text;
+		}
+		if ( ! isset( $response_data['status'] ) || ( $completed && 'in_progress' === $response_data['status'] ) ) {
+			$response_data['status'] = 'completed';
+		}
+
+		$converted_body = json_encode( $response_data );
+		if ( false === $converted_body ) {
+			throw ResponseException::fromInvalidData( $this->providerMetadata()->getName(), 'stream', 'The completed response could not be encoded.' );
+		}
+
+		return new Response( $response->getStatusCode(), $response->getHeaders(), $converted_body );
+	}
+
+	private function parse_server_sent_events( string $body ): array {
+		$events      = [];
+		$event_name  = '';
+		$data_lines  = [];
+		$lines       = preg_split( '/\r\n|\r|\n/', $body );
+
+		foreach ( false === $lines ? [] : $lines as $line ) {
+			if ( '' === $line ) {
+				if ( [] !== $data_lines ) {
+					$events[] = [
+						'event' => $event_name,
+						'data'  => implode( "\n", $data_lines ),
+					];
+				}
+				$event_name = '';
+				$data_lines = [];
+				continue;
+			}
+
+			if ( ':' === substr( $line, 0, 1 ) ) {
+				continue;
+			}
+
+			$separator = strpos( $line, ':' );
+			if ( false === $separator ) {
+				continue;
+			}
+
+			$field = substr( $line, 0, $separator );
+			$value = substr( $line, $separator + 1 );
+			if ( ' ' === substr( $value, 0, 1 ) ) {
+				$value = substr( $value, 1 );
+			}
+
+			if ( 'event' === $field ) {
+				$event_name = $value;
+			} elseif ( 'data' === $field ) {
+				$data_lines[] = $value;
+			}
+		}
+
+		if ( [] !== $data_lines ) {
+			$events[] = [
+				'event' => $event_name,
+				'data'  => implode( "\n", $data_lines ),
+			];
+		}
+
+		return $events;
 	}
 
 	private function convert_responses_response_to_chat_completions_response( Response $response ): Response {
@@ -346,5 +478,9 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 
 	private function uses_responses_api(): bool {
 		return 'responses' === $this->get_endpoint_type();
+	}
+
+	private function uses_streaming_responses_api(): bool {
+		return $this->uses_responses_api() && ResponsesSettings::uses_streaming_for_model( $this->metadata()->getId() );
 	}
 }
