@@ -1,0 +1,13 @@
+# WordPress.org release snapshots are managed in SVN.
+/tags/
+
+# SVN working copy metadata.
+.svn/
+
+# Local agent settings and credentials.
+/.agents/
+/.codex/
+/.aws/
+
+# Local operating system metadata.
+.DS_Store
