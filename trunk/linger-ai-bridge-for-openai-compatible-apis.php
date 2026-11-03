@@ -1,10 +1,10 @@
 <?php
 /**
  * Plugin Name:       AI Bridge for OpenAI-Compatible APIs
- * Description:       AI provider for the WordPress AI Client with configurable Responses and Chat Completions endpoints.
+ * Description:       Connect WordPress AI to custom OpenAI-compatible APIs. 支持双协议、默认模型及最多 10 个模型。
  * Requires at least: 7.0
  * Requires PHP:      7.4
- * Version:           0.1.4
+ * Version:           0.1.5
  * Author:            Linger0
  * Author URI:        https://github.com/Linger0
  * License:           GPL-2.0
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_VERSION', '0.1.4' );
+define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_VERSION', '0.1.5' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_PHP_VERSION', '7.4' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_WP_VERSION', '7.0' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );

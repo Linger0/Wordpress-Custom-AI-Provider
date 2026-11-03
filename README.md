@@ -2,6 +2,22 @@
 
 A WordPress AI Client provider with a custom API base URL, Responses and Chat Completions support, a default text model, and up to 10 configurable models.
 
+## 中文介绍
+
+AI Bridge for OpenAI-Compatible APIs 是一个 WordPress AI 服务桥接插件，为 WordPress AI Client 提供自定义 OpenAI 兼容接口接入，支持第三方 AI 服务和本地模型网关。
+
+- **自定义 API 地址**：按服务商要求填写完整 Base URL，例如 `https://example.com/v1`。
+- **双协议支持**：每个模型可选择 Responses 或 Chat Completions 协议，Responses 模型还可启用流式响应。
+- **默认模型**：为官方 WordPress AI 插件的自动文本生成设置优先使用的模型；各功能明确指定的模型或服务提供商仍优先生效。
+- **最多 10 个模型**：初始显示一行，点击“+ Add model”按需添加，可分别设置模型 ID、显示名称和启用状态。
+- **统一密钥管理**：在 WordPress 的“设置 > Connectors”中配置 API 密钥。
+
+配置方法：先在“设置 > Connectors”中配置本插件的 API 密钥，再进入“设置 > AI Bridge for OpenAI-Compatible APIs”，填写 API 地址和模型信息，启用模型、选择默认模型并保存。需要 WordPress 7.0+、PHP 7.4+；插件负责 AI 服务接入，具体的内容生成入口由 WordPress AI 插件或其他调用方提供。
+
+本插件并非 OpenAI 官方插件。发起 AI 请求时，提示词、系统指令等数据会发送至你配置的服务，请了解相应服务条款与隐私政策。
+
+代码位于 `trunk/`；根目录 `assets/` 用于 WordPress.org 展示素材，`trunk/assets/` 用于插件运行。发版快照保存在 SVN 的 `tags/` 中，该目录不纳入 Git。完整说明与版本记录见 [`trunk/readme.txt`](trunk/readme.txt)。
+
 ## Repository layout
 
 ```text

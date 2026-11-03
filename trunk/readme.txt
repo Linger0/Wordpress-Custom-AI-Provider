@@ -4,11 +4,11 @@ Tags: ai, artificial intelligence, openai, responses api, text generation
 Requires at least: 7.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 0.1.4
+Stable tag: 0.1.5
 License: GPLv2
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Adds a configurable AI provider for the WordPress AI Client with support for OpenAI-compatible Responses and Chat Completions endpoints.
+Connect WordPress AI to custom OpenAI-compatible APIs. 支持双协议、默认模型及最多 10 个模型。
 
 == Description ==
 
@@ -22,6 +22,30 @@ Each model can use one of two endpoint types:
 * Chat Completions-compatible endpoint: `/v1/chat/completions`
 
 For Responses-compatible models, the plugin adapts WordPress AI Client chat-style prompt payloads into the Responses API `input` format, then adapts Responses API output back into the chat-style response shape expected by the WordPress AI Client.
+
+= 中文说明 =
+
+AI Bridge for OpenAI-Compatible APIs 是面向 WordPress AI Client 的 AI 服务桥接插件，可连接自定义 OpenAI 兼容接口，适用于第三方 AI 服务、本地模型网关，以及需要自定义 API 地址和模型的站点。
+
+主要功能：
+
+* 自定义 API Base URL，支持包含版本路径的地址，例如 `https://example.com/v1`。
+* 每个模型可独立选择 Responses 或 Chat Completions 协议。
+* 最多配置 10 个模型，首次仅显示一行，点击“+ Add model”按需添加。
+* 可设置默认模型，供官方 WordPress AI 插件的自动文本生成功能优先使用。
+* 支持为 Responses 模型开启流式响应，并将结果汇总为标准文本生成结果。
+* 通过 WordPress 的 Connectors 设置管理 API 密钥，也支持 localhost 本地网关。
+
+配置步骤：
+
+1. 安装并启用插件，需要 WordPress 7.0 或更高版本、PHP 7.4 或更高版本。
+2. 在“设置 > Connectors”中，为“AI Bridge for OpenAI-Compatible APIs”配置 API 密钥。
+3. 打开“设置 > AI Bridge for OpenAI-Compatible APIs”，填写 API Base URL、模型 ID 和显示名称，并选择接口协议。
+4. 勾选需要启用的模型，在“Default”列选择默认模型，然后保存。需要更多模型时点击“+ Add model”。
+
+默认模型适用于自动文本生成；各功能或其他插件明确指定的模型、服务提供商仍优先生效。默认模型被停用或删除后，会回退到第一个启用的模型。插件提供 AI 服务接入能力，具体的内容生成入口由 WordPress AI 插件或其他调用方提供。
+
+本插件并非 OpenAI 官方插件，与 OpenAI 无隶属或背书关系。发起 AI 请求时，提示词、系统指令、模型设置等数据会发送至你配置的服务；使用前请了解该服务提供商的服务条款与隐私政策。
 
 = External Services =
 
@@ -72,6 +96,11 @@ Up to 10. New installations show one model row; click + Add model for more rows.
 1. Provider settings screen for configuring the API base URL and models.
 
 == Changelog ==
+
+= 0.1.5 =
+* Add Chinese plugin descriptions, feature explanations, and setup instructions.
+* Keep repository documentation and the license file at the repository root.
+* 新增中文插件介绍、功能说明与配置步骤，并整理发布包目录。
 
 = 0.1.4 =
 * Rename the plugin to AI Bridge for OpenAI-Compatible APIs while preserving existing settings and update compatibility.
