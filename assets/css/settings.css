@@ -1,0 +1,27 @@
+#linger-ai-bridge-models {
+	max-width: 1100px;
+}
+
+.linger-ai-bridge-table-wrap {
+	margin-top: 12px;
+	overflow-x: auto;
+}
+
+#linger-ai-bridge-models table {
+	min-width: 780px;
+}
+
+#linger-ai-bridge-models td {
+	vertical-align: middle;
+}
+
+#linger-ai-bridge-models input[type="text"] {
+	box-sizing: border-box;
+	width: 100%;
+	min-width: 130px;
+}
+
+#linger-ai-bridge-models .button-link-delete:disabled {
+	color: #646970;
+	cursor: default;
+}

@@ -5,13 +5,15 @@
 
 declare( strict_types=1 );
 
-namespace AiProviderForAnyOpenAiCompatibleProvider\Models;
+namespace LingerAiBridgeForOpenAiCompatibleApis\Models;
 
-use AiProviderForAnyOpenAiCompatibleProvider\Settings\ResponsesSettings;
+use LingerAiBridgeForOpenAiCompatibleApis\Settings\ResponsesSettings;
+use WordPress\AiClient\Common\Exception\TokenLimitReachedException;
 use WordPress\AiClient\Providers\Http\DTO\Request;
 use WordPress\AiClient\Providers\Http\DTO\RequestOptions;
 use WordPress\AiClient\Providers\Http\DTO\Response;
 use WordPress\AiClient\Providers\Http\Enums\HttpMethodEnum;
+use WordPress\AiClient\Providers\Http\Exception\ResponseException;
 use WordPress\AiClient\Providers\OpenAiCompatibleImplementation\AbstractOpenAiCompatibleTextGenerationModel;
 use WordPress\AiClient\Results\DTO\GenerativeAiResult;
 
@@ -40,9 +42,24 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 				$params['text'] = $this->convert_response_format_to_responses_text_param( $params['response_format'] );
 			}
 			unset( $params['response_format'] );
+			// Responses has no Chat Completions stop parameter.
+			unset( $params['stop'] );
 		}
 
-		return apply_filters( 'ai_provider_for_any_openai_compatible_provider_text_generation_params', $params, $this->metadata()->getId(), $this->get_endpoint_type() );
+		$params = apply_filters( 'linger_ai_bridge_for_openai_compatible_apis_text_generation_params', $params, $this->metadata()->getId(), $this->get_endpoint_type() );
+
+		if ( $this->uses_responses_api() ) {
+			// Some Responses API models reject this parameter entirely.
+			unset( $params['temperature'] );
+
+			if ( $this->uses_streaming_responses_api() ) {
+				$params['stream'] = true;
+			} else {
+				unset( $params['stream'] );
+			}
+		}
+
+		return $params;
 	}
 
 	protected function prepareResponseFormatParam( ?array $output_schema ): array {
@@ -111,7 +128,7 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 
 			$input[] = [
 				'role'    => $role,
-				'content' => $this->convert_message_content_to_responses_content( $message['content'] ?? '' ),
+				'content' => $this->convert_message_content_to_responses_content( $message['content'] ?? '', 'assistant' === $role ),
 			];
 		}
 
@@ -121,11 +138,12 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 	/**
 	 * Convert OpenAI chat content parts to Responses input content parts.
 	 */
-	private function convert_message_content_to_responses_content( $content ): array {
+	private function convert_message_content_to_responses_content( $content, bool $is_assistant = false ): array {
+		$text_type = $is_assistant ? 'output_text' : 'input_text';
 		if ( is_string( $content ) ) {
 			return [
 				[
-					'type' => 'input_text',
+					'type' => $text_type,
 					'text' => $content,
 				],
 			];
@@ -134,7 +152,7 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 		if ( ! is_array( $content ) ) {
 			return [
 				[
-					'type' => 'input_text',
+					'type' => $text_type,
 					'text' => '',
 				],
 			];
@@ -149,7 +167,7 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 			$type = $part['type'] ?? '';
 			if ( 'text' === $type ) {
 				$parts[] = [
-					'type' => 'input_text',
+					'type' => $text_type,
 					'text' => (string) ( $part['text'] ?? '' ),
 				];
 				continue;
@@ -165,7 +183,7 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 
 		if ( [] === $parts ) {
 			$parts[] = [
-				'type' => 'input_text',
+				'type' => $text_type,
 				'text' => '',
 			];
 		}
@@ -193,6 +211,10 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 			return parent::parseResponseToGenerativeAiResult( $response );
 		}
 
+		if ( $this->uses_streaming_responses_api() ) {
+			$response = $this->convert_streaming_responses_response_to_response( $response );
+		}
+
 		$response_data = $response->getData();
 		if ( is_array( $response_data ) && isset( $response_data['choices'] ) ) {
 			return parent::parseResponseToGenerativeAiResult( $response );
@@ -203,10 +225,143 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 		);
 	}
 
+	private function convert_streaming_responses_response_to_response( Response $response ): Response {
+		$body = $response->getBody();
+		if ( ! is_string( $body ) || '' === trim( $body ) ) {
+			throw ResponseException::fromMissingData( $this->providerMetadata()->getName(), 'stream' );
+		}
+
+		$decoded_body = json_decode( $body, true );
+		if ( is_array( $decoded_body ) ) {
+			return $response;
+		}
+
+		$response_data  = [];
+		$text_deltas    = [];
+		$completed_text = null;
+		$completed      = false;
+
+		foreach ( $this->parse_server_sent_events( $body ) as $event ) {
+			$event_data = json_decode( $event['data'], true );
+			if ( ! is_array( $event_data ) ) {
+				continue;
+			}
+
+			$event_type = isset( $event_data['type'] ) && is_string( $event_data['type'] ) ? $event_data['type'] : $event['event'];
+			if ( 'error' === $event_type ) {
+				$message = 'The streaming response contained an error event.';
+				if ( isset( $event_data['message'] ) && is_string( $event_data['message'] ) ) {
+					$message = $event_data['message'];
+				} elseif ( isset( $event_data['error']['message'] ) && is_string( $event_data['error']['message'] ) ) {
+					$message = $event_data['error']['message'];
+				}
+				throw ResponseException::fromInvalidData( $this->providerMetadata()->getName(), 'stream', $message );
+			}
+
+			if ( in_array( $event_type, [ 'response.completed', 'response.incomplete', 'response.failed' ], true ) ) {
+				$completed = true;
+				if ( ! isset( $event_data['response']['status'] ) ) {
+					$event_data['response']['status'] = substr( $event_type, strlen( 'response.' ) );
+				}
+			}
+
+			if ( isset( $event_data['response'] ) && is_array( $event_data['response'] ) ) {
+				$response_data = $event_data['response'];
+			}
+
+			if ( ( 'response.output_text.delta' === $event_type || 'response.refusal.delta' === $event_type ) && isset( $event_data['delta'] ) && is_string( $event_data['delta'] ) ) {
+				$text_deltas[] = $event_data['delta'];
+			}
+
+			if ( ( 'response.output_text.done' === $event_type || 'response.refusal.done' === $event_type ) && isset( $event_data['text'] ) && is_string( $event_data['text'] ) ) {
+				$completed_text = $event_data['text'];
+			}
+		}
+
+		$text = [] !== $text_deltas ? implode( '', $text_deltas ) : $completed_text;
+		if ( ! $completed ) {
+			throw ResponseException::fromMissingData( $this->providerMetadata()->getName(), 'response.completed' );
+		}
+
+		if ( ! isset( $response_data['output_text'] ) && is_string( $text ) ) {
+			$response_data['output_text'] = $text;
+		}
+		if ( ! isset( $response_data['status'] ) || ( $completed && 'in_progress' === $response_data['status'] ) ) {
+			$response_data['status'] = 'completed';
+		}
+
+		$converted_body = json_encode( $response_data );
+		if ( false === $converted_body ) {
+			throw ResponseException::fromInvalidData( $this->providerMetadata()->getName(), 'stream', 'The completed response could not be encoded.' );
+		}
+
+		return new Response( $response->getStatusCode(), $response->getHeaders(), $converted_body );
+	}
+
+	private function parse_server_sent_events( string $body ): array {
+		$events      = [];
+		$event_name  = '';
+		$data_lines  = [];
+		$lines       = preg_split( '/\r\n|\r|\n/', $body );
+
+		foreach ( false === $lines ? [] : $lines as $line ) {
+			if ( '' === $line ) {
+				if ( [] !== $data_lines ) {
+					$events[] = [
+						'event' => $event_name,
+						'data'  => implode( "\n", $data_lines ),
+					];
+				}
+				$event_name = '';
+				$data_lines = [];
+				continue;
+			}
+
+			if ( ':' === substr( $line, 0, 1 ) ) {
+				continue;
+			}
+
+			$separator = strpos( $line, ':' );
+			if ( false === $separator ) {
+				continue;
+			}
+
+			$field = substr( $line, 0, $separator );
+			$value = substr( $line, $separator + 1 );
+			if ( ' ' === substr( $value, 0, 1 ) ) {
+				$value = substr( $value, 1 );
+			}
+
+			if ( 'event' === $field ) {
+				$event_name = $value;
+			} elseif ( 'data' === $field ) {
+				$data_lines[] = $value;
+			}
+		}
+
+		if ( [] !== $data_lines ) {
+			$events[] = [
+				'event' => $event_name,
+				'data'  => implode( "\n", $data_lines ),
+			];
+		}
+
+		return $events;
+	}
+
 	private function convert_responses_response_to_chat_completions_response( Response $response ): Response {
 		$response_data = $response->getData();
 		if ( ! is_array( $response_data ) ) {
 			return $response;
+		}
+		$status = $response_data['status'] ?? '';
+		if ( isset( $response_data['error'] ) || in_array( $status, [ 'failed', 'cancelled', 'in_progress', 'queued' ], true ) ) {
+			$error   = $response_data['error'] ?? [];
+			$message = is_array( $error ) && isset( $error['message'] ) && is_string( $error['message'] ) ? $error['message'] : 'The Responses API request did not complete successfully.';
+			throw ResponseException::fromInvalidData( $this->providerMetadata()->getName(), 'status', $message );
+		}
+		if ( 'incomplete' === $status && 'max_output_tokens' === ( $response_data['incomplete_details']['reason'] ?? '' ) && class_exists( TokenLimitReachedException::class ) ) {
+			throw new TokenLimitReachedException( 'Generation stopped because the maximum output token limit was reached.', $this->getConfig()->getMaxTokens() );
 		}
 
 		$converted = [
@@ -254,13 +409,14 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 				}
 
 				foreach ( $output_item['content'] as $content_item ) {
-					if ( ! is_array( $content_item ) || ! isset( $content_item['text'] ) || ! is_string( $content_item['text'] ) ) {
+					if ( ! is_array( $content_item ) ) {
 						continue;
 					}
 
 					$type = isset( $content_item['type'] ) && is_string( $content_item['type'] ) ? $content_item['type'] : '';
-					if ( '' === $type || 'output_text' === $type || 'text' === $type || 'refusal' === $type ) {
-						$text_parts[] = $content_item['text'];
+					$text = 'refusal' === $type ? ( $content_item['refusal'] ?? $content_item['text'] ?? null ) : ( $content_item['text'] ?? null );
+					if ( in_array( $type, [ '', 'output_text', 'text', 'refusal' ], true ) && is_string( $text ) ) {
+						$text_parts[] = $text;
 					}
 				}
 			}
@@ -314,11 +470,11 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 		$effective_base_url = rtrim( ResponsesSettings::get_endpoint_url(), '/' );
 		$is_local           = preg_match( '#^https?://(localhost|127\\.0\\.0\\.1|\\[::1\\])(:\\d+)?(/|$)#i', $effective_base_url ) === 1;
 
-		if ( $is_local || $options->getTimeout() === null ) {
+		if ( $options->getTimeout() === null ) {
 			$options->setTimeout( $is_local ? 120.0 : 60.0 );
 		}
 
-		if ( $is_local || $options->getConnectTimeout() === null ) {
+		if ( $options->getConnectTimeout() === null ) {
 			$options->setConnectTimeout( $is_local ? 5.0 : 60.0 );
 		}
 
@@ -339,5 +495,9 @@ class ResponsesTextGenerationModel extends AbstractOpenAiCompatibleTextGeneratio
 
 	private function uses_responses_api(): bool {
 		return 'responses' === $this->get_endpoint_type();
+	}
+
+	private function uses_streaming_responses_api(): bool {
+		return $this->uses_responses_api() && ResponsesSettings::uses_streaming_for_model( $this->metadata()->getId() );
 	}
 }
