@@ -18,12 +18,24 @@ AI Bridge for OpenAI-Compatible APIs 是一个 WordPress AI 服务桥接插件�
 
 代码位于 `trunk/`；根目录 `assets/` 用于 WordPress.org 展示素材，`trunk/assets/` 用于插件运行。发版快照保存在 SVN 的 `tags/` 中，该目录不纳入 Git。完整说明与版本记录见 [`trunk/readme.txt`](trunk/readme.txt)。
 
+## Localization / 本地化
+
+The WordPress.org plugin description uses English source text in `trunk/readme.txt`. Directory translations are maintained separately in [Translate.WordPress.org](https://translate.wordpress.org/projects/wp-plugins/linger-ai-bridge-for-openai-compatible-apis/stable-readme/zh-cn/default/) and appear according to the directory's locale after translation-editor approval.
+
+The plugin bundles a Simplified Chinese (`zh_CN`) catalog for its metadata and settings in `trunk/languages/`. WordPress selects translations using the current user or site locale; English remains the fallback. Official WordPress.org language packs take priority over the bundled fallback catalog.
+
+WordPress.org 目录描述保留英文原文，通过官方翻译平台提供各语言译文；中文介绍不会直接拼接到所有访客看到的英文介绍里。后台插件简介和设置页面内置简体中文翻译，按 WordPress 当前用户或站点语言加载。
+
+Translation source files and readme translation drafts are in [`translations/`](translations/). Directory translations must be reviewed by a fluent human speaker and approved by a PTE/GTE before becoming public; including a PO file in this repository does not publish a translated WordPress.org listing.
+
 ## Repository layout
 
 ```text
 assets/          WordPress.org directory artwork (reserved for future assets)
 trunk/           Installable plugin source and WordPress.org readme.txt
 trunk/assets/    Runtime scripts, styles, and provider icon
+trunk/languages/ Bundled plugin translations
+translations/    Translation template and directory translation drafts
 LICENSE          Repository license
 ```
 

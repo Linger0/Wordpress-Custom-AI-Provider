@@ -180,6 +180,7 @@ class ResponsesSettings {
 			<p>
 				<?php
 				printf(
+					/* translators: 1: Opening link tag for the Connectors settings screen, 2: Closing link tag. */
 					esc_html__( 'Set your API key under %1$sSettings > Connectors%2$s for the AI Bridge for OpenAI-Compatible APIs connector.', 'linger-ai-bridge-for-openai-compatible-apis' ),
 					'<a href="' . esc_url( admin_url( 'options-connectors.php' ) ) . '">',
 					'</a>'

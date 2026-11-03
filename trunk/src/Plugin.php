@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Plugin {
 	public function init(): void {
+		add_action( 'init', [ $this, 'load_textdomain' ], 0 );
 		add_action( 'init', [ $this, 'register_provider' ], 5 );
 		add_action( 'init', [ $this, 'register_fallback_auth' ], 15 );
 		add_action( 'init', [ $this, 'initialize_settings' ] );
@@ -25,6 +26,14 @@ class Plugin {
 		add_filter( 'wpai_preferred_text_models', [ $this, 'prefer_default_model' ] );
 		add_filter( 'ai_experiments_preferred_models_for_text_generation', [ $this, 'prefer_default_model' ] );
 		add_filter( 'plugin_action_links_' . plugin_basename( LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_FILE ), [ $this, 'plugin_action_links' ] );
+	}
+
+	public function load_textdomain(): void {
+		load_plugin_textdomain(
+			'linger-ai-bridge-for-openai-compatible-apis',
+			false,
+			dirname( plugin_basename( LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_FILE ) ) . '/languages'
+		);
 	}
 
 	public function prefer_default_model( array $models ): array {

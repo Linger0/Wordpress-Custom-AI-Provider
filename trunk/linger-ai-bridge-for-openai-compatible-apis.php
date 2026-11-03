@@ -1,15 +1,16 @@
 <?php
 /**
  * Plugin Name:       AI Bridge for OpenAI-Compatible APIs
- * Description:       Connect WordPress AI to custom OpenAI-compatible APIs. 支持双协议、默认模型及最多 10 个模型。
+ * Description:       Connect WordPress AI to custom OpenAI-compatible APIs with Responses, Chat Completions, a default model, and up to 10 models.
  * Requires at least: 7.0
  * Requires PHP:      7.4
- * Version:           0.1.5
+ * Version:           0.1.6
  * Author:            Linger0
  * Author URI:        https://github.com/Linger0
  * License:           GPL-2.0
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       linger-ai-bridge-for-openai-compatible-apis
+ * Domain Path:       /languages
  */
 
 declare( strict_types=1 );
@@ -20,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_VERSION', '0.1.5' );
+define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_VERSION', '0.1.6' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_PHP_VERSION', '7.4' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_WP_VERSION', '7.0' );
 define( 'LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
@@ -46,6 +47,7 @@ function linger_ai_bridge_for_openai_compatible_apis_check_php_version(): bool {
 			static function () {
 				linger_ai_bridge_for_openai_compatible_apis_requirement_notice(
 					sprintf(
+						/* translators: 1: Minimum required PHP version, 2: Current PHP version. */
 						__( 'The AI Bridge for OpenAI-Compatible APIs plugin requires PHP version %1$s or higher. You are running PHP version %2$s.', 'linger-ai-bridge-for-openai-compatible-apis' ),
 						LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_PHP_VERSION,
 						PHP_VERSION
@@ -68,6 +70,7 @@ function linger_ai_bridge_for_openai_compatible_apis_check_wp_version(): bool {
 				global $wp_version;
 				linger_ai_bridge_for_openai_compatible_apis_requirement_notice(
 					sprintf(
+						/* translators: 1: Minimum required WordPress version, 2: Current WordPress version. */
 						__( 'The AI Bridge for OpenAI-Compatible APIs plugin requires WordPress version %1$s or higher. You are running WordPress version %2$s.', 'linger-ai-bridge-for-openai-compatible-apis' ),
 						LINGER_AI_BRIDGE_FOR_OPENAI_COMPATIBLE_APIS_MIN_WP_VERSION,
 						$wp_version
